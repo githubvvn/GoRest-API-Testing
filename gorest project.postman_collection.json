@@ -1,0 +1,614 @@
+{
+  "info": {
+    "_postman_id": "6ee3cb7c-460d-4e28-91ab-f24fa23ef677",
+    "name": "gorest project",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "54653239"
+  },
+  "item": [
+    {
+      "name": "Data-Driven",
+      "item": [
+        {
+          "name": "Get Data of All Users",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "f57eb64027eaf378a4d8539af9c76784a7d57ca24a1d1fd1cfda5d6d883df8e1",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseurl}}/users",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add Users by data-drivenFile",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var response = JSON.parse(responseBody);\r",
+                  "pm.collectionVariables.set(\"DUID\", response.id);\r",
+                  "tests[\"TC1 : Status 201\"] = responseCode.code == 201;\r",
+                  "//tests[\"TC2 : Name matches\"] = response.name == pm.iterationData.get(\"name\");\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"{{name}}\",\r\n    \"email\": \"{{email}}\",\r\n    \"gender\": \"{{gender}}\",\r\n    \"status\": \"{{status}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseurl}}/users",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get user after added",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var response = JSON.parse(responseBody);\r",
+                  "tests[\"TC1 : Status 200\"] = responseCode.code == 200;\r",
+                  "tests[\"TC2 : Name matches\"] = response.name == pm.collectionVariables.get(\"username\")\r",
+                  "tests[\"TC3 : Email matches\"] = response.email == pm.collectionVariables.get(\"userEmail\");\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "f57eb64027eaf378a4d8539af9c76784a7d57ca24a1d1fd1cfda5d6d883df8e1",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseurl}}/users/",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "users",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete added user data",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "tests[\"TC1 : Status 204\"] = responseCode.code == 204;"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "f57eb64027eaf378a4d8539af9c76784a7d57ca24a1d1fd1cfda5d6d883df8e1",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseurl}}/users/{{DUID}}",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "users",
+                "{{DUID}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "auth": {
+        "type": "bearer",
+        "bearer": [
+          {
+            "key": "token",
+            "value": "f57eb64027eaf378a4d8539af9c76784a7d57ca24a1d1fd1cfda5d6d883df8e1",
+            "type": "string"
+          }
+        ]
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              ""
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              ""
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "user list",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var response = JSON.parse(responseBody);",
+              "tests[\"TC1 : test status code is 200\"] = responseCode.code == 200 ;",
+              "tests[\"TC2 : check data present\"] = responseBody.has(\"data\");",
+              "tests[\"TC3 : check limit is 10\"] = responseBody.has(\"10\");",
+              "tests[\"TC4 : check limit = 10 via locator\"] = response.meta.pagination.limit == 10;",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "f57eb64027eaf378a4d8539af9c76784a7d57ca24a1d1fd1cfda5d6d883df8e1",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://gorest.co.in/public/v1/users/",
+          "protocol": "https",
+          "host": [
+            "gorest",
+            "co",
+            "in"
+          ],
+          "path": [
+            "public",
+            "v1",
+            "users",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Post/ create new user",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var response = JSON.parse(responseBody);\r",
+              "tests[\"tc1 : ID Should Present\"] = responseBody.has(\"id\");\r",
+              "tests[\"TC3 : Name should exist\"] = response.name != null;\r",
+              "tests[\"TC4 : Email should exist\"] = response.email != null;\r",
+              "tests[\"TC5 : Gender should be male\"] = response.gender == \"female\";\r",
+              "tests[\"TC6 : Status should be active\"] = response.status == \"inactive\"\r",
+              "const id = response.id;\r",
+              "pm.collectionVariables.set(\"UID\", id)\r",
+              "const username = response.name;\r",
+              "pm.collectionVariables.set(\"UNAME\", username);\r",
+              "console.log(id);\r",
+              "console.log(username);"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "f57eb64027eaf378a4d8539af9c76784a7d57ca24a1d1fd1cfda5d6d883df8e1",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"name\": \"{{$randomFullName}}\",\r\n  \"email\": \"{{$randomEmail}}\",\r\n  \"gender\": \"female\",\r\n  \"status\": \"inactive\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseurl}}/users",
+          "host": [
+            "{{baseurl}}"
+          ],
+          "path": [
+            "users"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get single user data",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var response = pm.response.json();\r",
+              "tests[\"tc1 : Response Code should be 200\"] = responseCode.code == 200;\r",
+              "tests[\"TC2 : ID should match UID\"] = response.id == pm.collectionVariables.get(\"UID\")\r",
+              "console.log(response);\r",
+              "tests[\"TC3 : Name should be UNAME\"] = response.name == pm.collectionVariables.get(\"UNAME\");\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "f57eb64027eaf378a4d8539af9c76784a7d57ca24a1d1fd1cfda5d6d883df8e1",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseurl}}/users/{{UID}}",
+          "host": [
+            "{{baseurl}}"
+          ],
+          "path": [
+            "users",
+            "{{UID}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Put/Update created user data",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var response = pm.response.json();\r",
+              "tests[\"TC1 : ID should match UID\"] = response.id == pm.collectionVariables.get(\"UID\")\r",
+              "tests[\"TC2 : Name should match updated name\"] == response.username == \"rama\";\r",
+              "//console.log(id);\r",
+              "\r",
+              "\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "const uid = pm.collectionVariables.get(\"UID\");\r",
+              "if(uid == null)\r",
+              "console.log(\"no UID FOUND\");\r",
+              "else\r",
+              "console.log(\"UID FOUND\");"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "f57eb64027eaf378a4d8539af9c76784a7d57ca24a1d1fd1cfda5d6d883df8e1",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{ \"name\": \"rama\", \"status\": \"inactive\" }",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseurl}}/users/{{UID}}",
+          "host": [
+            "{{baseurl}}"
+          ],
+          "path": [
+            "users",
+            "{{UID}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "get updated user data",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var response = pm.response.json();\r",
+              "tests[\"TC3 : Name should be rama\"] = response.name == \"rama\";\r",
+              "tests[\"TC3 : status should be inactive\"] = response.status == \"inactive\";"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "f57eb64027eaf378a4d8539af9c76784a7d57ca24a1d1fd1cfda5d6d883df8e1",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseurl}}/users/{{UID}}",
+          "host": [
+            "{{baseurl}}"
+          ],
+          "path": [
+            "users",
+            "{{UID}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete created user data",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "tests[\"Test Status Code 204\"] =    pm.response.to.have.status(204);\r",
+              "\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "f57eb64027eaf378a4d8539af9c76784a7d57ca24a1d1fd1cfda5d6d883df8e1",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseurl}}/users/{{UID}}",
+          "host": [
+            "{{baseurl}}"
+          ],
+          "path": [
+            "users",
+            "{{UID}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get single user data after deletion",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var response = pm.response.json();\r",
+              "tests[\"tc1 : Response Code should be 404\"] = responseCode.code == 404;\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "f57eb64027eaf378a4d8539af9c76784a7d57ca24a1d1fd1cfda5d6d883df8e1",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseurl}}/users/{{UID}}",
+          "host": [
+            "{{baseurl}}"
+          ],
+          "path": [
+            "users",
+            "{{UID}}"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "UID",
+      "value": ""
+    },
+    {
+      "key": "USERNAME",
+      "value": ""
+    },
+    {
+      "key": "UNAME",
+      "value": ""
+    },
+    {
+      "key": "DUID",
+      "value": ""
+    }
+  ]
+}
